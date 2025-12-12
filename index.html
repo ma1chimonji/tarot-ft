@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>TAROT CONSOLE v9.0</title>
+<title>TAROT CONSOLE v10.0</title>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <style>
   :root{
@@ -22,11 +22,25 @@
   }
 
   @media (max-width: 768px) {
-    :root { --card-w: 65px; --card-h: 110px; --font-scale: 0.6; --sidebar-w: 0px; }
+    :root { --card-w: 60px; --card-h: 100px; --font-scale: 0.6; --sidebar-w: 0px; }
     header h1 { font-size: 14px; }
     .wrap { display: flex !important; flex-direction: column; }
-    aside { order: 2; height: 30vh; border-right: none; border-top: 1px solid var(--line); padding: 10px; }
-    main { order: 1; height: 70vh; }
+    
+    /* スマホ用レイアウト調整: 高さの配分を変更 */
+    aside { 
+      order: 2; 
+      height: 40vh; /* 30vh -> 40vh に拡大 */
+      border-right: none; 
+      border-top: 1px solid var(--line); 
+      padding: 10px; 
+      display: flex;
+      flex-direction: column;
+    }
+    main { 
+      order: 1; 
+      height: 60vh; /* 70vh -> 60vh に縮小 */
+    }
+    
     .log-list { font-size: 10px; }
     .btn { padding: 8px 10px; font-size: 12px; }
   }
@@ -38,7 +52,7 @@
 
   .wrap{display:grid; grid-template-columns: var(--sidebar-w) 1fr; height:calc(100vh - 50px);}
   
-  aside{background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow:auto; display:flex; flex-direction:column; gap: 15px; z-index: 20; position: relative;}
+  aside{background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow:auto; display:flex; flex-direction:column; gap: 10px; z-index: 20; position: relative;}
 
   /* Main Area & Background */
   main {
@@ -65,8 +79,7 @@
   /* Particle Canvas (Interaction Layer) */
   #particle-canvas {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 15; /* Cards are z-index 10-100, but we want particles above background but clickable through? No, creating distinct layer */
-    pointer-events: none; /* Allows clicking through the canvas to the cards */
+    z-index: 15; pointer-events: none;
   }
 
   /* UI Components */
@@ -118,7 +131,7 @@
 
 <div class="wrap">
   <aside>
-    <div style="display:flex; flex-direction: column; gap: 10px;">
+    <div style="flex-shrink: 0; display:flex; flex-direction: column; gap: 10px;">
       <div>
         <div class="label">Spread</div>
         <select id="spreadSelect"></select>
@@ -128,7 +141,8 @@
         <button class="btn btn-save" id="saveBtn" style="flex:1">📸 PNG</button>
       </div>
     </div>
-    <div style="flex:1; overflow: auto; border-top:1px solid var(--line); margin-top:10px; padding-top:10px;">
+    
+    <div style="flex:1; overflow: auto; border-top:1px solid var(--line); margin-top:5px; padding-top:5px; min-height: 0;">
       <div class="label">CARD LOG</div>
       <ul class="log-list" id="history"></ul>
     </div>
@@ -198,7 +212,11 @@
     hexagram: { name: "ヘキサグラム(恋)", positions: [ {id:1, mean:"過去", pos:[20, 50]}, {id:2, mean:"現在", pos:[80, 50]}, {id:3, mean:"未来", pos:[50, 20]}, {id:4, mean:"対策・環境", pos:[80, 80]}, {id:5, mean:"相手の状況", pos:[80, 20]}, {id:6, mean:"自分の状況", pos:[20, 80]}, {id:7, mean:"最終結果", pos:[50, 50], z:2} ]},
     celticCross: { name: "ケルト十字", positions: [ {id:1, mean:"現状", pos:[50, 35]}, {id:2, mean:"障害/支援", pos:[50, 35], rotate: 90, z:1}, {id:3, mean:"顕在意識", pos:[20, 35]}, {id:4, mean:"潜在意識", pos:[80, 35]}, {id:5, mean:"過去の原因", pos:[50, 10]}, {id:6, mean:"近い未来", pos:[50, 60]}, {id:7, mean:"本人の姿勢", pos:[85, 85]}, {id:8, mean:"周囲の環境", pos:[65, 85]}, {id:9, mean:"希望/不安", pos:[45, 85]}, {id:10, mean:"最終結果", pos:[25, 85]} ]},
     findingLove: { name: "新しい恋", positions: [ {id:1, mean:"現状", pos:[50, 50]}, {id:2, mean:"相手の特徴", pos:[25, 20]}, {id:3, mean:"出会う場所", pos:[25, 80]}, {id:4, mean:"課題・障害", pos:[75, 20]}, {id:5, mean:"結果", pos:[75, 80]} ]},
-    diamondCross: { name: "ダイヤモンド", positions: [ {id:1, mean:"自分", pos:[50, 20]}, {id:2, mean:"相手", pos:[50, 80]}, {id:3, mean:"二人の現状", pos:[20, 50]}, {id:4, mean:"未来", pos:[80, 50]} ]}
+    diamondCross: { name: "ダイヤモンド", positions: [ {id:1, mean:"自分", pos:[50, 20]}, {id:2, mean:"相手", pos:[50, 80]}, {id:3, mean:"二人の現状", pos:[20, 50]}, {id:4, mean:"未来", pos:[80, 50]} ]},
+    // Career Spreads
+    twoPaths: { name: "⚖️ 二者択一 (進路選択)", positions: [ {id:1, mean:"現在の岐路", pos:[80, 50]}, {id:2, mean:"選択肢Aの未来", pos:[30, 25]}, {id:3, mean:"選択肢Bの未来", pos:[30, 75]}, {id:4, mean:"Aへのアドバイス", pos:[55, 25]}, {id:5, mean:"Bへのアドバイス", pos:[55, 75]} ]},
+    interview: { name: "🎯 面接・試験攻略", positions: [ {id:1, mean:"自分の強み・状態", pos:[50, 20]}, {id:2, mean:"相手(企業)が求めるもの", pos:[50, 80]}, {id:3, mean:"攻略の鍵・アピール点", pos:[20, 50]}, {id:4, mean:"結果・次のステップ", pos:[80, 50]} ]},
+    careerPath: { name: "🚀 キャリア・サクセス", positions: [ {id:1, mean:"現在の職業的実力", pos:[50, 15]}, {id:2, mean:"理想・目標", pos:[30, 25]}, {id:3, mean:"隠れた才能・強み", pos:[20, 50]}, {id:4, mean:"克服すべき課題", pos:[30, 75]}, {id:5, mean:"周囲の評価・環境", pos:[50, 85]}, {id:6, mean:"具体的なアクション", pos:[70, 50]}, {id:7, mean:"最終的な成果", pos:[50, 50], z:2} ]}
   };
 
   /* --- 2. Particle System --- */
@@ -211,7 +229,7 @@
       
       window.addEventListener('resize', () => this.resize());
       
-      // アンビエント粒子（背景で漂う用）
+      // Ambient Particles
       this.ambientParticles = [];
       for(let i=0; i<30; i++) {
         this.ambientParticles.push(this.createAmbient());
@@ -238,19 +256,18 @@
     }
 
     createExplosion(x, y) {
-      const count = 40; // 粒子の数
+      const count = 40; 
       for (let i = 0; i < count; i++) {
         const angle = Math.random() * Math.PI * 2;
         const speed = Math.random() * 5 + 2;
         this.particles.push({
-          x: x,
-          y: y,
+          x: x, y: y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           size: Math.random() * 3 + 1,
           alpha: 1,
           decay: Math.random() * 0.02 + 0.01,
-          color: Math.random() > 0.5 ? '#64b5f6' : '#64f6c2' // 青と緑の魔法色
+          color: Math.random() > 0.5 ? '#64b5f6' : '#64f6c2'
         });
       }
     }
@@ -258,41 +275,30 @@
     animate() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-      // Ambient Update
+      // Ambient
       this.ambientParticles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if(p.x < 0) p.x = this.canvas.width;
-        if(p.x > this.canvas.width) p.x = 0;
-        if(p.y < 0) p.y = this.canvas.height;
-        if(p.y > this.canvas.height) p.y = 0;
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < 0) p.x = this.canvas.width; if(p.x > this.canvas.width) p.x = 0;
+        if(p.y < 0) p.y = this.canvas.height; if(p.y > this.canvas.height) p.y = 0;
         
         this.ctx.fillStyle = `rgba(160, 200, 255, ${p.alpha})`;
-        this.ctx.beginPath();
-        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        this.ctx.fill();
+        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); this.ctx.fill();
       });
 
-      // Explosion Update
+      // Explosion
       for (let i = this.particles.length - 1; i >= 0; i--) {
         const p = this.particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= p.decay;
-        p.size *= 0.96; // Shrink
+        p.x += p.vx; p.y += p.vy; p.alpha -= p.decay; p.size *= 0.96;
 
         if (p.alpha <= 0) {
           this.particles.splice(i, 1);
         } else {
           this.ctx.fillStyle = p.color;
           this.ctx.globalAlpha = p.alpha;
-          this.ctx.beginPath();
-          this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          this.ctx.fill();
+          this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); this.ctx.fill();
           this.ctx.globalAlpha = 1.0;
         }
       }
-
       requestAnimationFrame(() => this.animate());
     }
   }
@@ -300,8 +306,6 @@
   /* --- 3. App Logic --- */
   const el = { select: $('#spreadSelect'), btn: $('#deployBtn'), saveBtn: $('#saveBtn'), container: $('#spread-container'), list: $('#history'), main: $('main') };
   let currentDeck = [];
-  
-  // Initialize Particle System
   const particles = new ParticleSystem('particle-canvas');
 
   function init(){
@@ -359,12 +363,9 @@
       </div>
     `;
 
-    // Click Interaction with Particles
     slot.onclick = function(e){
       if(this.classList.contains('flipped')) return;
       
-      // Trigger Particle Explosion at click coordinates
-      // adjust for canvas offset if needed (here canvas is full screen relative to main)
       const rect = el.main.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
