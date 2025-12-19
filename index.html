@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>TAROT CONSOLE v10.0</title>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>占いノ館</h1>
+</header>
+
+<div class="wrap">
+  <aside>
+    <div style="flex-shrink: 0; display:flex; flex-direction: column; gap: 10px;">
+      <div>
+        <div class="label">Spread</div>
+        <select id="spreadSelect"></select>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn" id="deployBtn" style="flex:2">DRAW</button>
+        <button class="btn btn-save" id="saveBtn" style="flex:1">📸 PNG</button>
+      </div>
+    </div>
+    
+    <div style="flex:1; overflow: auto; border-top:1px solid var(--line); margin-top:5px; padding-top:5px; min-height: 0;">
+      <div class="label">CARD LOG</div>
+      <ul class="log-list" id="history"></ul>
+    </div>
+  </aside>
+
+  <main id="capture-area">
+    <canvas id="particle-canvas"></canvas>
+    
+    <div id="spread-container">
+      <div style="color: var(--muted); font-size: 12px; text-align:center; position: relative; z-index: 100;">Select Spread & Deploy</div>
+    </div>
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
